@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: /db/changelog/create-order-table.sql
+#  - include:
+#      file: /db/changelog/create-order-item-table.sql
+
+

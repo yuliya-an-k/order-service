@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: order-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_URL:localhost:5443/order_service}
+    password: ${DB_PASSWORD:123}
+    username: ${DB_USERNAME:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+server:
+  port: 8087
+
+
+
+
