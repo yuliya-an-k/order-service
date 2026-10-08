@@ -1,5 +1,7 @@
 package com.learning.coffee.order_service.service;
 
+import com.learning.coffee.order_service.client.CatalogClient;
+import com.learning.coffee.order_service.dto.OrderCreate;
 import com.learning.coffee.order_service.dto.OrderCreateRequest;
 import com.learning.coffee.order_service.dto.OrderDto;
 import com.learning.coffee.order_service.entity.Order;
@@ -22,6 +24,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final CatalogClient client;
 
     public List<OrderDto> getOrders() {
         List<Order> orders = orderRepository.findAll();
@@ -60,5 +63,11 @@ public class OrderService {
             totalAmount = totalAmount.add(amount);
         }
         return totalAmount;
+    }
+
+    public void create(OrderCreate request) {
+        List<UUID> orders = request.productId();
+
+        client.getProduct();
     }
 }

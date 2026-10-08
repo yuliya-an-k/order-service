@@ -9,6 +9,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
+app:
+  base-url: ${BASE_URL:}
+
+
 server:
   port: 8087
 
