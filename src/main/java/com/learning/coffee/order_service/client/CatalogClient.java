@@ -1,5 +1,6 @@
 package com.learning.coffee.order_service.client;
 
+import com.learning.coffee.order_service.dto.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class CatalogClient {
     @Value("${app.base-url:http://localhost:8088}")
     private String BASE_URL;
 
-    public String getProduct(UUID id) {
+    public ProductResponse getProduct(UUID id) {
 
         URI uri = UriComponentsBuilder.fromUriString(BASE_URL)
                 .path("/get-product/" + id)
@@ -28,6 +29,6 @@ public class CatalogClient {
         return client.get()
                 .uri(uri)
                 .retrieve()
-                .body(String.class);
+                .body(ProductResponse.class);
     }
 }

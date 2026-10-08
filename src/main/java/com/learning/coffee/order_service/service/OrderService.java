@@ -68,6 +68,8 @@ public class OrderService {
     public void create(OrderCreate request) {
         List<UUID> orders = request.productId();
 
-        client.getProduct();
+        for (UUID or : orders){
+            client.getProduct(or);
+        }
     }
 }
