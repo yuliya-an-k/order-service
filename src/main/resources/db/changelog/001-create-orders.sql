@@ -9,6 +9,7 @@ CREATE TABLE orders (
     total_amount NUMERIC(19, 2)
 );
 
+
 CREATE TABLE order_item (
     id UUID PRIMARY KEY,
     order_id UUID NOT NULL REFERENCES orders(id),
