@@ -69,7 +69,7 @@ public class OrderService {
         List<UUID> orders = request.productId();
 
         for (UUID or : orders){
-            client.getProduct(or);
+            var response = client.getProduct(or);
         }
     }
 }
