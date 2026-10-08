@@ -4,6 +4,7 @@ import com.learning.coffee.order_service.entity.enumeration.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -33,6 +34,9 @@ public class Order {
 
     private BigDecimal totalAmount;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(
+            mappedBy="order",
+            cascade=CascadeType.ALL
+    )
     private List<OrderItem> items;
 }

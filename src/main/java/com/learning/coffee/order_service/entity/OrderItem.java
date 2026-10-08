@@ -20,13 +20,13 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
+    @ManyToOne(
+            fetch=FetchType.LAZY
+    )
+    @JoinColumn(name="order_id", nullable=false)
     private Order order;
 
-//    @ManyToOne
-//    @JoinColumn(name = "product_id")
-//    private Product product;
+    private UUID productId;
 
     @NotNull(message = "Product name is required")
     private String productName;
