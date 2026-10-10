@@ -1,24 +1,17 @@
 package com.learning.coffee.order_service.dto;
 
-import com.learning.coffee.order_service.entity.OrderItem;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
+import java.util.UUID;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class OrderCreateRequest {
+public record OrderCreateRequest(
+        String customerName,
 
-    private String customerName;
+        @NotEmpty
+        List<UUID> productId,
 
-    @Valid
-    @NotEmpty(message = "Order must contain at least one item")
-    private List<OrderItem> items;
+        @NotEmpty
+        List<Integer> quantity
+) {
 }
