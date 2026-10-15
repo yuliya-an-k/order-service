@@ -3,6 +3,7 @@ package com.learning.coffee.order_service.service;
 import com.learning.coffee.order_service.client.CatalogClient;
 import com.learning.coffee.order_service.dto.OrderCreateRequest;
 import com.learning.coffee.order_service.dto.OrderDto;
+import com.learning.coffee.order_service.dto.OrderRequestDto;
 import com.learning.coffee.order_service.entity.Order;
 import com.learning.coffee.order_service.entity.OrderItem;
 import com.learning.coffee.order_service.entity.enumeration.OrderStatus;
@@ -12,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -52,19 +54,9 @@ public class OrderService {
         return totalAmount;
     }
 
+    @Transactional
     public void create(OrderCreateRequest request) {
-        List<UUID> productIdList = request.productId();
-        List<Integer> quantityList = request.quantity();
-
-        List<OrderItem> items = new ArrayList<>();
-
-        for (int i = 0; i < productIdList.size(); i++) {
-            UUID productId = productIdList.get(i);
-            var response = client.getProduct(productId);
-            Integer quantity = quantityList.get(i);
-            OrderItem item = orderItemService.create(productId, response, quantity);
-            items.add(item);
-        }
+        List<OrderRequestDto> productRequests = request.productId();
 
         Order order = new Order();
         String customerName = request.customerName();
@@ -72,6 +64,18 @@ public class OrderService {
             order.setCustomerName(customerName);
         }
         order.setStatus(OrderStatus.CREATED);
+
+        List<OrderItem> items = new ArrayList<>();
+
+        for (OrderRequestDto  req : productRequests) {
+            UUID productId = req.getProductId();
+            var response = client.getProduct(productId);
+            Integer quantity = req.getCount();
+            OrderItem item = orderItemService.create(productId, response, quantity);
+            item.setOrder(order);
+            items.add(item);
+        }
+
         order.setTotalAmount(calculateOrderTotalAmount(items));
         order.setItems(items);
         orderRepository.save(order);

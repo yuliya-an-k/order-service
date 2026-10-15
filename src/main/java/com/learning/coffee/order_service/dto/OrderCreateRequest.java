@@ -9,9 +9,7 @@ public record OrderCreateRequest(
         String customerName,
 
         @NotEmpty
-        List<UUID> productId,
+        List<OrderRequestDto> productId
 
-        @NotEmpty
-        List<Integer> quantity
 ) {
 }

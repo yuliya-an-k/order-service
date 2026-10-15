@@ -6,6 +6,7 @@ import com.learning.coffee.order_service.repository.OrderItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -14,15 +15,12 @@ import java.util.UUID;
 @Service
 public class OrderItemService {
 
-    private final OrderItemRepository orderItemRepository;
-
     public OrderItem create(UUID productId, ProductResponse response, Integer quantity) {
-        OrderItem item = OrderItem.builder()
+        return OrderItem.builder()
                 .productId(productId)
                 .productName(response.getProductName())
                 .unitPrice(response.getUnitPrice())
                 .quantity(quantity)
                 .build();
-       return orderItemRepository.save(item);
     }
 }

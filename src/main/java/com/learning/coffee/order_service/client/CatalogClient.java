@@ -22,7 +22,7 @@ public class CatalogClient {
     public ProductResponse getProduct(UUID id) {
 
         URI uri = UriComponentsBuilder.fromUriString(BASE_URL)
-                .path("/get-product/" + id)
+                .path("/products/get-product/" + id)
                 .build(true)
                 .toUri();
 
