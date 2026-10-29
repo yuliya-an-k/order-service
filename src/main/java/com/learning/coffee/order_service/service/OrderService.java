@@ -1,9 +1,8 @@
 package com.learning.coffee.order_service.service;
 
 import com.learning.coffee.order_service.client.CatalogClient;
-import com.learning.coffee.order_service.dto.OrderCreateRequest;
-import com.learning.coffee.order_service.dto.OrderDto;
-import com.learning.coffee.order_service.dto.OrderRequestDto;
+import com.learning.coffee.order_service.client.PaymentClient;
+import com.learning.coffee.order_service.dto.*;
 import com.learning.coffee.order_service.entity.Order;
 import com.learning.coffee.order_service.entity.OrderItem;
 import com.learning.coffee.order_service.entity.enumeration.OrderStatus;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -29,6 +29,7 @@ public class OrderService {
     private final OrderMapper orderMapper;
     private final CatalogClient client;
     private final OrderItemService orderItemService;
+    private final PaymentClient paymentClient;
 
     public List<OrderDto> getOrders() {
         List<Order> orders = orderRepository.findAll();
@@ -52,6 +53,27 @@ public class OrderService {
             totalAmount = totalAmount.add(amount);
         }
         return totalAmount;
+    }
+
+    private PaymentRequest generatePaymentRequest(Order order) {
+        Random random = new Random();
+        boolean accurate = ((random.nextInt(2) == 1) ? true : false);
+        return new PaymentRequest(order.getId(), order.getTotalAmount(), accurate);
+    }
+
+    private void checkPayment(PaymentResponse paymentResponse) {
+        UUID orderId = paymentResponse.getOrderId();
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> {
+                    log.error("Order with ID {} not found", orderId);
+                    return new EntityNotFoundException("Order not found");
+                });
+        String status = paymentResponse.getStatus();
+        if (status.equals("SUCCESSFUL")) {
+            order.setStatus(OrderStatus.PAID);
+        } else {
+            order.setStatus(OrderStatus.CANCELLED);
+        }
     }
 
     @Transactional
@@ -78,6 +100,10 @@ public class OrderService {
 
         order.setTotalAmount(calculateOrderTotalAmount(items));
         order.setItems(items);
-        orderRepository.save(order);
+        Order createdOrder = orderRepository.save(order);
+
+        PaymentRequest paymentRequest = generatePaymentRequest(createdOrder);
+        PaymentResponse paymentResponse = paymentClient.createPayment(paymentRequest);
+        checkPayment(paymentResponse);
     }
 }

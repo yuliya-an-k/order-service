@@ -12,6 +12,7 @@ spring:
 
 app:
   base-url: ${BASE_URL:http://localhost:8088}
+  payment-url: ${PAYMENT_URL:http://localhost:8086}
 
 
 server:
